@@ -69,10 +69,8 @@ class World:
                     room.add_doors()
 
     def draw_current_room(self):
-        self.game.map_surface = pg.Surface(MAP_RES)
-        self.game.map_surface.fill(BACKGROUND)
-        self.current_room.generate_map(*MAP_RES)
-        self.current_room.draw_map(self.game.map_surface)
+        self.game.room_surface.fill((0, 0, 0, 0))
+        self.current_room.draw_doors(self.game.room_surface)
 
     def change_current_room(self, direction: str):
         player_rect = self.game.player.rect

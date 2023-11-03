@@ -2,6 +2,7 @@ import pygame as pg
 import sys
 from utils import *
 from src.map.world_generator import World
+from src.map.tileset import Tileset
 from src.entities.player import Player
 
 minimap_width = WIDTH // 2
@@ -14,13 +15,18 @@ class Game:
         self.screen = pg.display.set_mode(RES)
         self.clock = pg.time.Clock()
         self.world_manager = World(5, 5, 10, self)
+        self.wall_list = []  # lista dos retangulos da porta (pra colisão
 
-        self.map_surface = pg.Surface(MAP_RES).convert()
+        # todas as "camadas" do mapa
+        self.base_map_surface = pg.Surface(MAP_RES).convert()
+        self.room_surface = pg.Surface(MAP_RES, pg.SRCALPHA).convert_alpha()
         self.transition_surface = pg.Surface(MAP_RES).convert_alpha()
-        self.map_surface.fill(BACKGROUND)
+        self.base_map_surface.fill(BACKGROUND)
+        self.room_surface.fill(BACKGROUND)
         self.transition_surface.fill(BACKGROUND)
         self.transition_alpha = 255
         self.transitioning = True
+        Tileset().generate_map(self.base_map_surface, *MAP_RES, self)
 
         self.player = Player(self)
         self.world_manager.draw_current_room()
@@ -53,7 +59,8 @@ class Game:
 
     def draw(self):
         self.screen.fill(BACKGROUND)
-        self.screen.blit(self.map_surface, ((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2))
+        self.screen.blit(self.base_map_surface, ((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2))
+        self.screen.blit(self.room_surface, ((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2))
         self.player.draw(self.screen)
         if self.transitioning:
             self.screen.blit(self.transition_surface, ((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2))
