@@ -105,6 +105,9 @@ class World:
         self.game.player.rect.x = new_player_pos[0]
         self.game.player.rect.y = new_player_pos[1]
 
+        self.game.transition_alpha = 255
+        self.game.transitioning = True
+
     def __str__(self):  # mostra no terminal o mapa
         world_str = ""
         for row in self.world:
