@@ -4,7 +4,7 @@
 - [ ] <b>Main mechanics</b>
   - [ ] Movement
     - [ ] Improve movement near the door
-    - [ ] Make the player image flip according to the mouse
+    - [x] Make the player image flip according to the mouse
     - [ ] Walking animation
   - [ ] Weapons
     - [ ] Create types of weapons
@@ -23,9 +23,9 @@
   - [ ] Animations for all entities
   - [ ] UI
     - [ ] Life
-    - [ ] Minimap
+    - [x] Minimap
     - [ ] Score
     - [ ] FPS
   - [ ] Particles
-- [ ] <b>Performance</b>
-  - [ ] Improve fps
+- [x] <b>Performance</b>
+  - [x] Improve fps
