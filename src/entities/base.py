@@ -12,15 +12,20 @@ class Entity(pg.sprite.Sprite):
         self.rect.x, self.rect.y = position
         self.hitbox = get_mask_rect(self.image, *self.rect.topleft)
         self.velocity = [0, 0]  # alterações a fazer no X e no Y da entidade
+        self.direction = 1  # left, right = 0, 1
 
     def update_hitbox(self):
         self.hitbox = get_mask_rect(self.image, *self.rect.topleft)
         self.hitbox.midbottom = self.rect.midbottom
 
-    def update(self):
+    def basic_update(self):
         self.update_hitbox()
         self.rect.move_ip(*self.velocity)
         self.hitbox.move_ip(*self.velocity)
+        self.update_direction()
+
+    def update_direction(self):
+        pass
 
     def movement(self):
         pass

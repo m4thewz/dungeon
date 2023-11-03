@@ -10,9 +10,7 @@ class Player(Entity):
         self.game = game
 
     def update(self):
-        self.update_hitbox()
-        self.rect.move_ip(*self.velocity)
-        self.hitbox.move_ip(*self.velocity)
+        self.basic_update()
         self.movement(pg.key.get_pressed())
 
     def get_event(self, event):
@@ -54,3 +52,9 @@ class Player(Entity):
             hitbox = wall.hitbox.move((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2)  # posiciona a parede no local certo para fazer a colisao
             if any(hitbox.collidepoint(point) for point in collide_points):
                 self.velocity = [0, 0]
+
+    def update_direction(self):
+        distance = pg.mouse.get_pos()[0] - self.rect.x
+        if distance <= 0 and self.direction != 0 or distance > 0 and self.direction != 1:
+            self.image = pg.transform.flip(self.image, True, False)
+            self.direction = distance > 0
