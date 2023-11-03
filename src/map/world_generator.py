@@ -99,6 +99,7 @@ class World:
 
         # altera a sala atual e a desenha, depois deixa o jogador proximo a porta que entrou
         self.current_room = self.world[neighbour_y][neighbour_x]
+        self.game.minimap.set_current_room(self.current_room)
         self.draw_current_room()
         self.game.player.rect.x = new_player_pos[0]
         self.game.player.rect.y = new_player_pos[1]

@@ -3,6 +3,7 @@ import sys
 from utils import *
 from src.map.world_generator import World
 from src.map.tileset import Tileset
+from src.map.minimap import Minimap
 from src.entities.player import Player
 
 minimap_width = WIDTH // 2
@@ -21,14 +22,19 @@ class Game:
         self.base_map_surface = pg.Surface(MAP_RES).convert()
         self.room_surface = pg.Surface(MAP_RES, pg.SRCALPHA).convert_alpha()
         self.transition_surface = pg.Surface(MAP_RES).convert_alpha()
+        self.minimap_surface = pg.Surface(MINIMAP_SIZE).convert_alpha()
+
         self.base_map_surface.fill(BACKGROUND)
         self.room_surface.fill(BACKGROUND)
+        self.minimap_surface.fill(BACKGROUND)
         self.transition_surface.fill(BACKGROUND)
         self.transition_alpha = 255
         self.transitioning = True
         Tileset().generate_map(self.base_map_surface, *MAP_RES, self)
 
         self.player = Player(self)
+        self.minimap = Minimap()
+        self.minimap.set_current_room(self.world_manager.current_room)
         self.world_manager.draw_current_room()
 
     def transition(self, From: int = 255, To: int = 0, change: int = -10):
@@ -59,11 +65,15 @@ class Game:
 
     def draw(self):
         self.screen.fill(BACKGROUND)
+        self.minimap_surface.fill(BACKGROUND)
         self.screen.blit(self.base_map_surface, ((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2))
         self.screen.blit(self.room_surface, ((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2))
         self.player.draw(self.screen)
         if self.transitioning:
             self.screen.blit(self.transition_surface, ((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2))
+
+        self.minimap.draw(self.minimap_surface)
+        self.screen.blit(self.minimap_surface, (WIDTH - (MINIMAP_ROOM_SIZE[0] + MINIMAP_GAP) * 5, MINIMAP_GAP))
 
     def run(self):
         while True:
