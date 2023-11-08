@@ -1,6 +1,7 @@
 # Dungeon (this game has no name)
- 
+
 ## To-Do
+
 - [ ] <b>Main mechanics</b>
   - [ ] Movement
     - [ ] Improve movement near the door

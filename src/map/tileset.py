@@ -90,6 +90,13 @@ class Tileset:
             tile.draw(surface)
             self.map[pos] = tile
 
+        for x in range(2, map_width - 2):
+            Tile("shadow_horizontal_top", x * TILE_SIZE, 2 * TILE_SIZE).draw(surface)
+            Tile("shadow_horizontal_bottom", x * TILE_SIZE, (map_height - 3) * TILE_SIZE).draw(surface)
+        for y in range(2, map_height - 2):
+            Tile("shadow_vertical_left", 2 * TILE_SIZE, y * TILE_SIZE).draw(surface)
+            Tile("shadow_vertical_right", (map_width - 3) * TILE_SIZE, y * TILE_SIZE).draw(surface)
+
     def generate_tilesets(self):
         global tileset
         # Defino as imagens que serão utilizas
@@ -124,7 +131,11 @@ class Tileset:
             "wall_diagonal_upper_right": pg.transform.rotate(wall_diagonal, -90),
             "wall_diagonal_bottom_left": pg.transform.rotate(wall_diagonal, 90),
             "wall_diagonal_bottom_right": pg.transform.rotate(wall_diagonal, 180),
-            "floor": self.load_resized_tile("assets/map/floor.png")
+            "floor": self.load_resized_tile("assets/map/floor.png"),
+            "shadow_vertical_right": self.load_resized_tile("assets/map/floor_shadow_vertical.png"),
+            "shadow_vertical_left": self.load_resized_tile("assets/map/floor_shadow_vertical_left.png"),
+            "shadow_horizontal_bottom": self.load_resized_tile("assets/map/floor_shadow_horizontal.png"),
+            "shadow_horizontal_top": self.load_resized_tile("assets/map/floor_shadow_horizontal_top.png")
         }
 
     def load_resized_tile(self, image):

@@ -16,15 +16,15 @@ class Door(Tile):
                 angle = 0
                 x, y = centerx, 0
             case "down":
-                x, y = centerx, (height - 2) * TILE_SIZE
+                x, y = centerx, (height - 3) * TILE_SIZE
                 angle = 180
             case "left":
                 x, y = 0, centery
                 angle = 90
             case "right":
-                x, y = (width - 2) * TILE_SIZE, centery
+                x, y = (width - 3) * TILE_SIZE, centery
                 angle = -90
-        image = pg.transform.rotate(pg.transform.scale(pg.image.load("assets/map/door.png").convert_alpha(), (TILE_SIZE * 4, TILE_SIZE * 2)), angle)
+        image = pg.transform.rotate(pg.transform.scale(pg.image.load("assets/map/door_closed.png").convert_alpha(), (TILE_SIZE * 4, TILE_SIZE * 3)), angle)
         super().__init__("door", x, y, image)
         self.openned = False
         self.direction = direction
