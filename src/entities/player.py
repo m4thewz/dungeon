@@ -2,16 +2,41 @@ import pygame as pg
 from utils import *
 from src.entities.base import Entity
 import math
-
+SCALE = lambda x: PLAYER_WIDTH * x / 16
 
 class Player(Entity):
     def __init__(self, game):
         super().__init__("player.png", TILE_SIZE, TILE_SIZE * 1.5, (WIDTH // 2, HEIGHT // 2))
         self.game = game
+        self.weapon_sprite = pg.transform.scale(pg.image.load("assets/weapons/gun.png").convert_alpha(), (SCALE(23), SCALE(8)))
+        self.weapon_image = self.weapon_sprite
+        self.weapon_rect = self.weapon_image.get_rect()
 
     def update(self):
         self.basic_update()
         self.movement(pg.key.get_pressed())
+        self.rotate_weapon()
+
+    def rotate_weapon(self):
+        player_pos, mouse_pos = self.rect.center, pg.mouse.get_pos()
+        dx, dy =  mouse_pos[0] - player_pos[0], mouse_pos[1] - player_pos[1] # distancia x e y entre o mouse e o centro do jogador
+        angle = math.degrees(math.atan2(-dy, dx)) # função matematica que retorna o angulo entre dois pontos (no caso o mouse e o jogador)
+        center_diff = (SCALE(2), -SCALE(2)) if self.direction else (-SCALE(4), -SCALE(2))  # posição da arma
+        origin = (self.rect.centerx - center_diff[0], self.rect.centery - center_diff[1]) # ponto de origem do eixo da arma
+
+        # posiciona o retangulo da arma em seu eixo de origem 
+        weapon_rect = self.weapon_sprite.get_rect(topleft=origin) if self.direction else self.weapon_sprite.get_rect(bottomleft=origin)
+        # cria um vetor e entao o rotaciona
+        pivot = pg.math.Vector2(origin) - weapon_rect.center
+        offset = pivot.rotate(-angle)
+        # rotaciona a imagem da arma e a posiciona com base no eixo de origem
+        self.weapon_image = pg.transform.rotozoom(self.weapon_sprite, angle, 1)
+        self.weapon_rect = self.weapon_image.get_rect(center=(origin[0] - offset.x, origin[1] - offset.y))
+
+    def draw(self, surface):
+        self.draw_shadow(surface, (0, 0, self.rect.width / 2, self.rect.height / 8))
+        surface.blit(self.image, self.rect)
+        surface.blit(self.weapon_image, self.weapon_rect)
 
     def get_event(self, event):
         pass
@@ -57,4 +82,5 @@ class Player(Entity):
         distance = pg.mouse.get_pos()[0] - self.rect.x
         if distance <= 0 and self.direction != 0 or distance > 0 and self.direction != 1:
             self.image = pg.transform.flip(self.image, True, False)
+            self.weapon_sprite = pg.transform.flip(self.weapon_sprite, False, True)
             self.direction = distance > 0
