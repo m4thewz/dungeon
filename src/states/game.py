@@ -37,6 +37,7 @@ class GameState (BaseState):
         self.world_manager.draw_current_room()
         pg.mouse.set_visible(False)
         self.cursor_image = pg.transform.scale(pg.image.load("assets/cursor.png").convert_alpha(), (16, 16))
+        self.cursor_rect = self.cursor_image.get_rect(center=pg.mouse.get_pos())
 
     def transition(self, From: int = 255, To: int = 0, change: int = -10):
         alpha = self.transition_alpha
@@ -59,6 +60,7 @@ class GameState (BaseState):
         if self.transitioning:
             self.transition()
         self.player.update()
+        self.cursor_rect.center = pg.mouse.get_pos()
 
     def draw(self):
         self.minimap_surface.fill(BACKGROUND)
@@ -71,4 +73,4 @@ class GameState (BaseState):
         self.minimap.draw(self.minimap_surface)
         self.screen.blit(self.minimap_surface, (WIDTH - (MINIMAP_ROOM_SIZE[0] + MINIMAP_GAP) * 5, MINIMAP_GAP))
 
-        self.screen.blit(self.cursor_image, pg.mouse.get_pos())
+        self.screen.blit(self.cursor_image, self.cursor_rect)
