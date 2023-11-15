@@ -1,6 +1,8 @@
 import random
 from src.map.room import Room
 from utils import *
+from random import randint
+from src.entities.enemy import Enemy
 # Essa classe é responsável pela geração do mundo do jogo. Define onde cada sala ira aparecer e também suas propriedades
 
 
@@ -107,6 +109,12 @@ class World:
 
         self.game.transition_alpha = 255
         self.game.transitioning = True
+
+    def generate_enemies(self):
+        for row in self.world:
+            for room in row:
+                if isinstance(room, Room) and room.type == "normal_room":
+                    room.enemy_list = [Enemy(randint(1, 6), room, self.game) for _ in range(randint(4, 12))]
 
     def __str__(self):  # mostra no terminal o mapa
         world_str = ""

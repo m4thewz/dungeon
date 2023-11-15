@@ -35,6 +35,9 @@ class GameState (BaseState):
         self.minimap = Minimap()
         self.minimap.set_current_room(self.world_manager.current_room)
         self.world_manager.draw_current_room()
+
+        self.world_manager.generate_enemies()
+
         pg.mouse.set_visible(False)
         self.cursor_image = pg.transform.scale(pg.image.load("assets/cursor.png").convert_alpha(), (16, 16))
         self.cursor_rect = self.cursor_image.get_rect(center=pg.mouse.get_pos())
@@ -57,15 +60,18 @@ class GameState (BaseState):
             self.player.get_event(event)
 
     def update(self):
-        if self.transitioning:
-            self.transition()
         self.player.update()
         self.cursor_rect.center = pg.mouse.get_pos()
+        if self.transitioning:
+            self.transition()
+        else:
+            [enemy.update() for enemy in self.world_manager.current_room.enemy_list]
 
     def draw(self):
         self.minimap_surface.fill(BACKGROUND)
         self.screen.blit(self.base_map_surface, ((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2))
         self.screen.blit(self.room_surface, ((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2))
+        [enemy.draw(self.screen) for enemy in self.world_manager.current_room.enemy_list]
         self.player.draw(self.screen)
         if self.transitioning:
             self.screen.blit(self.transition_surface, ((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2))

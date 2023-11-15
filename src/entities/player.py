@@ -13,12 +13,17 @@ class Player(Entity):
         self.weapon_image = self.weapon_sprite
         self.weapon_rect = self.weapon_image.get_rect()
         self.bullets = []
+        self.hp = 10
+        self.direction = 1
 
     def update(self):
-        self.basic_update()
-        self.movement(pg.key.get_pressed())
-        self.rotate_weapon()
-        [bullet.update() for bullet in self.bullets]
+        if self.hp > 0:
+            self.basic_update()
+            self.movement(pg.key.get_pressed())
+            self.rotate_weapon()
+            [bullet.update() for bullet in self.bullets]
+        else:
+            self.game.change_state("game_over")
 
     def rotate_weapon(self):
         dx, dy = OFFSET(self.rect.center, pg.mouse.get_pos())  # distancia x e y entre o mouse e o centro do jogador
@@ -44,6 +49,9 @@ class Player(Entity):
     def get_event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
             self.bullets.append(Bullet(self))
+        elif event.type == 77:
+            self.image = pg.transform.scale(pg.image.load("assets/characters/player.png").convert_alpha(), (TILE_SIZE, TILE_SIZE * 1.5))
+            pg.time.set_timer(77, 0)  # desliga o evento de ID 77
 
     def movement(self, keys):
         keys_pressed = 0
@@ -113,4 +121,10 @@ class Bullet(pg.sprite.Sprite):
             hitbox = wall.hitbox.move((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2)  # posiciona a parede no local certo para fazer a colisao
             if pg.Rect.colliderect(hitbox, self.rect):
                 self.player.bullets.pop(self.player.bullets.index(self))
+                return
+
+        for enemy in self.player.game.world_manager.current_room.enemy_list:
+            if self.rect.colliderect(enemy.hitbox):
+                self.player.bullets.pop(self.player.bullets.index(self))
+                enemy.hp -= 1
                 return
