@@ -12,11 +12,19 @@ BACKGROUND = (00, 00, 00)
 PLAYER_SPEED = 10
 PLAYER_WIDTH = TILE_SIZE
 
+BULLET_SPEED = 13
+BULLET_SIZE = (16, 8)
 
-def get_mask_rect(surf, top=0, left=0):
+
+# funções globais
+
+def GET_MASK_RECT(surf, top=0, left=0):
     mask = pg.mask.from_surface(surf)
     rect_list = mask.get_bounding_rects()
     if rect_list:
         mask_rect = rect_list[0].unionall(rect_list)
         mask_rect.move_ip(top, left)
         return mask_rect
+
+
+def OFFSET(rect1, rect2): return (rect2[0] - rect1[0], rect2[1] - rect1[1])

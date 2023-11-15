@@ -103,6 +103,7 @@ class World:
         self.draw_current_room()
         self.game.player.rect.x = new_player_pos[0]
         self.game.player.rect.y = new_player_pos[1]
+        self.game.player.bullets = []  # remove todas as balas da sala anterior
 
         self.game.transition_alpha = 255
         self.game.transitioning = True

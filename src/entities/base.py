@@ -10,12 +10,12 @@ class Entity(pg.sprite.Sprite):
         self.image = pg.transform.scale(pg.image.load(f"assets/characters/{image}").convert_alpha(), (width, height))
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = position
-        self.hitbox = get_mask_rect(self.image, *self.rect.topleft)
+        self.hitbox = GET_MASK_RECT(self.image, *self.rect.topleft)
         self.velocity = [0, 0]  # alterações a fazer no X e no Y da entidade
         self.direction = 1  # left, right = 0, 1
 
     def update_hitbox(self):
-        self.hitbox = get_mask_rect(self.image, *self.rect.topleft)
+        self.hitbox = GET_MASK_RECT(self.image, *self.rect.topleft)
         self.hitbox.midbottom = self.rect.midbottom
 
     def basic_update(self):

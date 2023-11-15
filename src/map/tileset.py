@@ -11,7 +11,7 @@ class Tile(pg.sprite.Sprite):
         self.image = image if image else tileset[tile_name]
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = x, y
-        self.hitbox = get_mask_rect(self.image, *self.rect.topleft)
+        self.hitbox = GET_MASK_RECT(self.image, *self.rect.topleft)
 
     def draw(self, surface):
         surface.blit(self.image, (self.rect.x, self.rect.y))

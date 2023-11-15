@@ -2,7 +2,8 @@ import pygame as pg
 from utils import *
 from src.entities.base import Entity
 import math
-SCALE = lambda x: PLAYER_WIDTH * x / 16
+def SCALE(x): return PLAYER_WIDTH * x / 16
+
 
 class Player(Entity):
     def __init__(self, game):
@@ -11,20 +12,21 @@ class Player(Entity):
         self.weapon_sprite = pg.transform.scale(pg.image.load("assets/weapons/gun.png").convert_alpha(), (SCALE(23), SCALE(8)))
         self.weapon_image = self.weapon_sprite
         self.weapon_rect = self.weapon_image.get_rect()
+        self.bullets = []
 
     def update(self):
         self.basic_update()
         self.movement(pg.key.get_pressed())
         self.rotate_weapon()
+        [bullet.update() for bullet in self.bullets]
 
     def rotate_weapon(self):
-        player_pos, mouse_pos = self.rect.center, pg.mouse.get_pos()
-        dx, dy =  mouse_pos[0] - player_pos[0], mouse_pos[1] - player_pos[1] # distancia x e y entre o mouse e o centro do jogador
-        angle = math.degrees(math.atan2(-dy, dx)) # função matematica que retorna o angulo entre dois pontos (no caso o mouse e o jogador)
+        dx, dy = OFFSET(self.rect.center, pg.mouse.get_pos())  # distancia x e y entre o mouse e o centro do jogador
+        angle = math.degrees(math.atan2(-dy, dx))  # função matematica que retorna o angulo entre dois pontos (no caso o mouse e o jogador)
         center_diff = (SCALE(2), -SCALE(2)) if self.direction else (-SCALE(4), -SCALE(2))  # posição da arma
-        origin = (self.rect.centerx - center_diff[0], self.rect.centery - center_diff[1]) # ponto de origem do eixo da arma
+        origin = (self.rect.centerx - center_diff[0], self.rect.centery - center_diff[1])  # ponto de origem do eixo da arma
 
-        # posiciona o retangulo da arma em seu eixo de origem 
+        # posiciona o retangulo da arma em seu eixo de origem
         weapon_rect = self.weapon_sprite.get_rect(topleft=origin) if self.direction else self.weapon_sprite.get_rect(bottomleft=origin)
         # cria um vetor e entao o rotaciona
         pivot = pg.math.Vector2(origin) - weapon_rect.center
@@ -37,9 +39,11 @@ class Player(Entity):
         self.draw_shadow(surface, (0, 0, self.rect.width / 2, self.rect.height / 8))
         surface.blit(self.image, self.rect)
         surface.blit(self.weapon_image, self.weapon_rect)
+        [surface.blit(bullet.image, bullet.rect) for bullet in self.bullets]
 
     def get_event(self, event):
-        pass
+        if event.type == pg.MOUSEBUTTONDOWN:
+            self.bullets.append(Bullet(self))
 
     def movement(self, keys):
         keys_pressed = 0
@@ -84,3 +88,29 @@ class Player(Entity):
             self.image = pg.transform.flip(self.image, True, False)
             self.weapon_sprite = pg.transform.flip(self.weapon_sprite, False, True)
             self.direction = distance > 0
+
+
+class Bullet(pg.sprite.Sprite):
+    def __init__(self, player):
+        pg.sprite.Sprite.__init__(self)
+        dx, dy = OFFSET(player.rect.center, pg.mouse.get_pos())
+
+        # apos obter a distsancia do mouse e do jogador, define a imagem (ja rotacionada com base no angulo)
+        self.image = pg.transform.rotate(pg.transform.scale(pg.image.load("assets/weapons/bullet.png").convert_alpha(), BULLET_SIZE), math.degrees(math.atan2(-dy, dx)))
+        self.rect = self.image.get_rect(center=(player.weapon_rect.centerx, player.weapon_rect.centery))
+        self.speed = BULLET_SPEED
+        self.angle = math.atan2(dy, dx)
+        self.player = player
+
+        self.rect.centerx += math.cos(self.angle) * (player.weapon_image.get_width() // 2 + 3)
+        self.rect.centery += math.sin(self.angle) * (player.weapon_image.get_width() // 2 + 3)
+
+    def update(self):
+        self.rect.centerx += math.cos(self.angle) * self.speed
+        self.rect.centery += math.sin(self.angle) * self.speed
+
+        for wall in self.player.game.wall_list:
+            hitbox = wall.hitbox.move((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2)  # posiciona a parede no local certo para fazer a colisao
+            if pg.Rect.colliderect(hitbox, self.rect):
+                self.player.bullets.pop(self.player.bullets.index(self))
+                return
