@@ -72,6 +72,7 @@ class World:
 
     def draw_current_room(self):
         self.game.room_surface.fill((0, 0, 0, 0))
+        print(self.current_room.enemy_list)
         self.current_room.draw_doors(self.game.room_surface)
 
     def change_current_room(self, direction: str):

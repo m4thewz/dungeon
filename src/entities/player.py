@@ -80,10 +80,12 @@ class Player(Entity):
         collide_points = (test_rect.midbottom, test_rect.bottomleft, test_rect.bottomright)
 
         for door in self.game.world_manager.current_room.doors_rect:
-            hitbox = door.hitbox.move((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2)  # posiciona a parede no local certo para fazer a colisao
-            if any(hitbox.collidepoint(point) for point in collide_points):
-                self.velocity = [0, 0]
-                self.game.world_manager.change_current_room(door.direction)
+            # verifica se a sala esta aberta (se nao tem nenhum inimigo)
+            if not self.game.world_manager.current_room.enemy_list:
+                hitbox = door.hitbox.move((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2)  # posiciona a parede no local certo para fazer a colisao
+                if any(hitbox.collidepoint(point) for point in collide_points):
+                    self.velocity = [0, 0]
+                    self.game.world_manager.change_current_room(door.direction)
 
         for wall in self.game.wall_list:
             hitbox = wall.hitbox.move((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2)  # posiciona a parede no local certo para fazer a colisao

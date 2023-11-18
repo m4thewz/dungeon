@@ -7,7 +7,7 @@ from src.map.tileset import Tile
 
 # adiciona alguns parametros adicionais da class Tile para as portas
 class Door(Tile):
-    def __init__(self, direction: str):
+    def __init__(self, direction: str, open: bool = False):
         width, height = MAP_WIDTH // TILE_SIZE, MAP_HEIGHT // TILE_SIZE
         centerx, centery = ((width - 4) // 2) * TILE_SIZE, ((height - 3) // 2) * TILE_SIZE
         # define o angulo e a posição da porta com base na direção
@@ -24,15 +24,14 @@ class Door(Tile):
             case "right":
                 x, y = (width - 3) * TILE_SIZE, centery
                 angle = -90
-        image = pg.transform.rotate(pg.transform.scale(pg.image.load("assets/map/door_closed.png").convert_alpha(), (TILE_SIZE * 4, TILE_SIZE * 3)), angle)
-        super().__init__("door", x, y, image)
-        self.openned = False
+        image_location = "door_opened" if open else "door_closed"
+        image = pg.transform.rotate(pg.transform.scale(pg.image.load(f"assets/map/{image_location}.png").convert_alpha(), (TILE_SIZE * 4, TILE_SIZE * 3)), angle)
+        super().__init__(image_location, x, y, image)
+        self.image_opened = pg.transform.rotate(pg.transform.scale(pg.image.load("assets/map/door_opened.png").convert_alpha(), (TILE_SIZE * 4, TILE_SIZE * 3)), angle)
         self.direction = direction
-        self.angle = angle
 
     def draw(self, surface):
-        if not self.openned:  # *mais tarde tem q fazer porta aberta e nao deixar trocar de porta se a porta tiver fechada
-            surface.blit(self.image, (self.rect.x, self.rect.y))
+        surface.blit(self.image, (self.rect.x, self.rect.y))
 
 
 class Room:
@@ -63,7 +62,9 @@ class Room:
                 self.doors.append("down")
 
     def draw_doors(self, surface):
-        self.doors_rect = [Door(direction) for direction in self.doors]
+        # verifica o estado da porta (aberta ou fechada)
+        open = True if not self.enemy_list else False
+        self.doors_rect = [Door(direction, open) for direction in self.doors]
         [door.draw(surface) for door in self.doors_rect]
 
     def __repr__(self):

@@ -71,6 +71,9 @@ class Enemy(Entity):
     def update(self):
         if self.hp <= 0:
             self.room.enemy_list.pop(self.room.enemy_list.index(self))
+            # vai abrir as portas da sala
+            if not self.room.enemy_list:
+                self.game.world_manager.draw_current_room()
         else:
             player = self.game.player
             # pega a distancia entre o inimigo e o jogador

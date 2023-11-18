@@ -54,6 +54,8 @@ class GameState (BaseState):
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_e:
                 print(self.world_manager)
+            elif event.key == pg.K_c:
+                print(self.world_manager.current_room.enemy_list)
             elif event.key in [pg.K_ESCAPE, pg.K_RETURN, pg.K_KP_ENTER, pg.K_PAUSE]:
                 self.change_state("pause_menu")
         else:
@@ -68,14 +70,15 @@ class GameState (BaseState):
             [enemy.update() for enemy in self.world_manager.current_room.enemy_list]
 
     def draw(self):
-        self.minimap_surface.fill(BACKGROUND)
         self.screen.blit(self.base_map_surface, ((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2))
         self.screen.blit(self.room_surface, ((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2))
+
         [enemy.draw(self.screen) for enemy in self.world_manager.current_room.enemy_list]
         self.player.draw(self.screen)
         if self.transitioning:
             self.screen.blit(self.transition_surface, ((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2))
 
+        self.minimap_surface.fill(BACKGROUND)
         self.minimap.draw(self.minimap_surface)
         self.screen.blit(self.minimap_surface, (WIDTH - (MINIMAP_ROOM_SIZE[0] + MINIMAP_GAP) * 5, MINIMAP_GAP))
 
