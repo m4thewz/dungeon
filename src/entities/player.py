@@ -14,7 +14,7 @@ class Player(Entity):
         self.weapon_rect = self.weapon_image.get_rect()
         self.bullets = []
         self.hp = 10
-        self.direction = 1
+        self.direction = 1  # 0: esquerda, 1: direita
 
     def update(self):
         if self.hp > 0:
@@ -51,6 +51,8 @@ class Player(Entity):
             self.bullets.append(Bullet(self))
         elif event.type == 77:
             self.image = pg.transform.scale(pg.image.load("assets/characters/player.png").convert_alpha(), (TILE_SIZE, TILE_SIZE * 1.5))
+            if not self.direction:
+                self.image = pg.transform.flip(self.image, True, False)
             pg.time.set_timer(77, 0)  # desliga o evento de ID 77
 
     def movement(self, keys):
