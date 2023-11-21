@@ -15,5 +15,7 @@ class BaseState:
         self.main.current_state = state
         if state == "game":
             pg.mouse.set_visible(False)
+            self.main.states["game"].transition_alpha = 255
+            self.main.states["game"].transitioning = True
         else:
             pg.mouse.set_visible(True)
