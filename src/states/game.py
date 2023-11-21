@@ -38,7 +38,6 @@ class GameState (BaseState):
 
         self.world_manager.generate_enemies()
 
-        pg.mouse.set_visible(False)
         self.cursor_image = pg.transform.scale(pg.image.load("assets/cursor.png").convert_alpha(), (16, 16))
         self.cursor_rect = self.cursor_image.get_rect(center=pg.mouse.get_pos())
 

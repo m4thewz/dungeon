@@ -18,13 +18,12 @@ class Game:
             "game": GameState(self.screen, self),
             "game_over": GameOverState(self.screen, self)
         }
-        self.current_state = "game"
+        self.current_state = "menu"
 
     def event_loop(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                pg.quit()
-                sys.exit()
+                self.exit()
             else:
                 self.states[self.current_state].get_event(event)
 
@@ -36,6 +35,10 @@ class Game:
     def draw(self):
         self.screen.fill(BACKGROUND)
         self.states[self.current_state].draw()
+
+    def exit(self):
+        pg.quit()
+        sys.exit()
 
     def run(self):
         while True:
