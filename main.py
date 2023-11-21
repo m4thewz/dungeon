@@ -36,6 +36,11 @@ class Game:
         self.screen.fill(BACKGROUND)
         self.states[self.current_state].draw()
 
+    def new_game(self):
+        self.states["game"] = GameState(self.screen, self)
+        self.current_state = "game"
+        pg.mouse.set_visible(False)
+
     def exit(self):
         pg.quit()
         sys.exit()

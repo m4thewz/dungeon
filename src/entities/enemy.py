@@ -83,6 +83,8 @@ class Enemy(Entity):
             # se o inimigo acertou o jogador
             if self.hitbox.colliderect(player.hitbox):
                 self.room.enemy_list.pop(self.room.enemy_list.index(self))
+                if not self.room.enemy_list:
+                    self.game.world_manager.draw_current_room()
                 player.hp -= 1
                 if player.hp > 0:
                     player.image = pg.transform.scale(pg.image.load("assets/characters/player_hurt.png").convert_alpha(), (TILE_SIZE, TILE_SIZE * 1.5))

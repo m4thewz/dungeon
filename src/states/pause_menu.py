@@ -10,8 +10,8 @@ class PauseMenuState (BaseState):
         self.main = main
         self.font = pg.font.Font("assets/Blockhead.otf", 124)
 
-        functions = [lambda: self.change_state("game"), lambda: self.main.exit()]
-        self.menu = Menu(["Continuar", "Sair"], functions, (WIDTH / 2, HEIGHT / 2), 75, center=True)
+        functions = [lambda: self.change_state("game"), lambda: self.change_state("menu")]
+        self.menu = Menu(["Continuar", "Voltar ao menu principal"], functions, (WIDTH / 2, HEIGHT / 2), 75, center=True)
 
     def get_event(self, event):
         if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
