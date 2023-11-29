@@ -3,7 +3,7 @@ from utils import *
 from src.states.base import BaseState
 from src.menu import Menu
 
-
+# tela inicial do jogo
 class MenuState (BaseState):
     def __init__(self, screen, main):
         self.screen = screen

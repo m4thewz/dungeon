@@ -2,10 +2,13 @@ import pygame as pg
 from utils import *
 from src.entities.base import Entity
 import math
+
+# retorna uma escala com base  no tamanho do jogador
 def SCALE(x): return PLAYER_WIDTH * x / 16
 
 
 class Player(Entity):
+    # inicia a classe do jogador e define variaveis importantes
     def __init__(self, game):
         super().__init__("player.png", TILE_SIZE, TILE_SIZE * 1.5, (WIDTH // 2, HEIGHT // 2))
         self.game = game
@@ -17,6 +20,7 @@ class Player(Entity):
         self.direction = 1  # 0: esquerda, 1: direita
 
     def update(self):
+        # se o jogador tiver mais de 0 de hp, atualzia o jogador e sua arma, caso contrario encerra o jogo
         if self.hp > 0:
             self.basic_update()
             self.movement(pg.key.get_pressed())
@@ -41,6 +45,7 @@ class Player(Entity):
         self.weapon_rect = self.weapon_image.get_rect(center=(origin[0] - offset.x, origin[1] - offset.y))
 
     def draw(self, surface):
+        # desenha o jogador, sua sombra, sua arma e tambem as balas presentes na tela
         self.draw_shadow(surface, (0, 0, self.rect.width / 2, self.rect.height / 8))
         surface.blit(self.image, self.rect)
         surface.blit(self.weapon_image, self.weapon_rect)
@@ -48,8 +53,8 @@ class Player(Entity):
 
     def get_event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
-            self.bullets.append(Bullet(self))
-        elif event.type == 77:
+            self.bullets.append(Bullet(self)) # atira
+        elif event.type == 77: # evento personalizado, ativado quando o jogador sofre dano. Deixa ele vermelho temporariamente
             self.image = pg.transform.scale(pg.image.load("assets/characters/player.png").convert_alpha(), (TILE_SIZE, TILE_SIZE * 1.5))
             if not self.direction:
                 self.image = pg.transform.flip(self.image, True, False)
@@ -95,6 +100,7 @@ class Player(Entity):
                 self.velocity = [0, 0]
 
     def update_direction(self):
+        # atualiza a direção da imagem do jogador com base na direção do mouse
         distance = pg.mouse.get_pos()[0] - self.rect.x
         if distance <= 0 and self.direction != 0 or distance > 0 and self.direction != 1:
             self.image = pg.transform.flip(self.image, True, False)
@@ -102,8 +108,10 @@ class Player(Entity):
             self.direction = distance > 0
 
 
+# classe das balas
 class Bullet(pg.sprite.Sprite):
     def __init__(self, player):
+        # define o angulo da bala, sua imagem ja rotacionada e sua velocidade
         pg.sprite.Sprite.__init__(self)
         dx, dy = OFFSET(player.rect.center, pg.mouse.get_pos())
 
@@ -118,9 +126,11 @@ class Bullet(pg.sprite.Sprite):
         self.rect.centery += math.sin(self.angle) * (player.weapon_image.get_width() // 2 + 3)
 
     def update(self):
+        # atualiza sua direção
         self.rect.centerx += math.cos(self.angle) * self.speed
         self.rect.centery += math.sin(self.angle) * self.speed
 
+        # se colidir com uma parede ou inimigo, a remove da lista de balas presentes
         for wall in self.player.game.wall_list:
             hitbox = wall.hitbox.move((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2)  # posiciona a parede no local certo para fazer a colisao
             if pg.Rect.colliderect(hitbox, self.rect):

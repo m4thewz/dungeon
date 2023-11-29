@@ -4,6 +4,7 @@ from src.entities.base import Entity
 import random
 from math import hypot
 
+# valores customizados de inimigos
 enemies_options = {
     1: {
         "speed": 4.7,
@@ -31,7 +32,7 @@ enemies_options = {
     }
 }
 
-
+# função que desenha a barra de vida
 def draw_health_bar(surface, pos, size, border_color, back_color, health_color, progress):
     pg.draw.rect(surface, back_color, (*pos, *size))
     pg.draw.rect(surface, border_color, (*pos, *size), 1)
@@ -51,27 +52,28 @@ class Enemy(Entity):
         self.game = game
         self.spawn()
 
-    def spawn(self):
+    def spawn(self): # spawna o inimigo em um lugar aleatorio da sala
         start_x, start_y = (WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2
-        wall_size = TILE_SIZE * 3  # tamanho da parede (pra nao spawnar inimigo dentro das paredes)
+        wall_size = TILE_SIZE * 4  # tamanho da parede (pra nao spawnar inimigo dentro das paredes)
         self.rect.x = random.randint(start_x + wall_size, start_x + MAP_WIDTH - wall_size)
         self.rect.y = random.randint(start_y + wall_size, start_y + MAP_HEIGHT - wall_size)
 
-    def draw_health(self, surface):
+    def draw_health(self, surface): # desenha a barra de vida do inimigo
         if self.hp < self.max_hp:
             health_rect = pg.Rect(0, 0, 30, 8)
             health_rect.midbottom = self.rect.centerx, self.hitbox.top - 5
             draw_health_bar(surface, health_rect.topleft, health_rect.size, (1, 0, 0), (255, 0, 0), (0, 255, 0), self.hp / self.max_hp)
 
     def draw(self, surface):
+        # desenha o inimigo, sua sombra e também sua vida
         self.draw_shadow(surface, (0, 0, self.hitbox.width / 1.8, self.rect.height / 8))
         surface.blit(self.image, self.rect)
         self.draw_health(surface)
 
     def update(self):
-        if self.hp <= 0:
+        if self.hp <= 0: # se a vida do inimigo chegar a 0
             self.room.enemy_list.pop(self.room.enemy_list.index(self))
-            # vai abrir as portas da sala
+            # vai abrir as portas da sala se nao tiver mais nenhum inimigo
             if not self.room.enemy_list:
                 self.game.world_manager.draw_current_room()
         else:
@@ -95,11 +97,13 @@ class Enemy(Entity):
                     pg.time.set_timer(77, 0)
 
             if distance > 0:
+                # se tive uma distancia entre o jogador, se move
                 self.rect.x += dx * self.speed / distance
                 self.rect.y += dy * self.speed / distance
         self.basic_update()
 
     def update_direction(self):
+        # atualiza a imagem do inimigo com base na direção do jogador
         dx = OFFSET(self.rect.center, self.game.player.rect.center)[0]
         if dx <= 0 and self.direction != 0 or dx > 0 and self.direction != 1:
             self.image = pg.transform.flip(self.image, True, False)

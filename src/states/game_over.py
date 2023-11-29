@@ -20,6 +20,7 @@ class GameOverState (BaseState):
             self.menu.get_event(event)
 
     def draw(self):
+        # desenha a tela de game over
         title = self.font.render("Game Over", True, COLOR)
         self.screen.blit(title, ((WIDTH - title.get_width()) / 2, 0.03 * HEIGHT))
         self.menu.draw(self.screen)

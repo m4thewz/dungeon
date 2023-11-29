@@ -1,7 +1,7 @@
 import pygame as pg
 from utils import *
 
-
+# menu que exibe opções e um seletor
 class Menu:
     def __init__(self, options: list | tuple, functions: list | tuple, pos: list | tuple, font_size: int = 30, gap: int = 5, center: bool = False):
         dot_size = font_size / 2

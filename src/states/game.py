@@ -6,9 +6,6 @@ from src.map.tileset import Tileset
 from src.map.minimap import Minimap
 from src.entities.player import Player
 
-minimap_width = WIDTH // 2
-minimap_height = HEIGHT // 2
-
 
 class GameState (BaseState):
     def __init__(self, screen, main):
@@ -29,19 +26,28 @@ class GameState (BaseState):
         self.transition_surface.fill(BACKGROUND)
         self.transition_alpha = 255
         self.transitioning = True
+        # gera o mapa base
         Tileset().generate_map(self.base_map_surface, *MAP_RES, self)
 
         self.player = Player(self)
         self.minimap = Minimap()
+
+        # desenha a sala atual
         self.minimap.set_current_room(self.world_manager.current_room)
         self.world_manager.draw_current_room()
 
+        # spawna os inimigos da sala atual
         self.world_manager.generate_enemies()
 
+        # cursor do mouse personalizado
         self.cursor_image = pg.transform.scale(pg.image.load("assets/cursor.png").convert_alpha(), (16, 16))
         self.cursor_rect = self.cursor_image.get_rect(center=pg.mouse.get_pos())
+        
+        # fonte a ser usada
+        self.font = pg.font.Font("assets/Blockhead.otf", 64)
 
     def transition(self, From: int = 255, To: int = 0, change: int = -10):
+        # vai diminuindo o alfa da surface, criando uma transição
         alpha = self.transition_alpha
         if (From <= alpha and alpha <= To) or (To <= alpha and alpha <= From):
             self.transition_alpha += change
@@ -51,16 +57,17 @@ class GameState (BaseState):
 
     def get_event(self, event):
         if event.type == pg.KEYDOWN:
-            if event.key == pg.K_e:
+            if event.key == pg.K_e: # printa o mundo atual
                 print(self.world_manager)
-            elif event.key == pg.K_c:
+            elif event.key == pg.K_c: # pritna os inimigos
                 print(self.world_manager.current_room.enemy_list)
-            elif event.key in [pg.K_ESCAPE, pg.K_RETURN, pg.K_KP_ENTER, pg.K_PAUSE]:
+            elif event.key in [pg.K_ESCAPE, pg.K_RETURN, pg.K_KP_ENTER, pg.K_PAUSE]: # pausa o jogo
                 self.change_state("pause_menu")
         else:
             self.player.get_event(event)
 
     def update(self):
+        # atualiza o jogador, o mouse, a camada de transição e os inimigos presentes da sala
         self.player.update()
         self.cursor_rect.center = pg.mouse.get_pos()
         if self.transitioning:
@@ -69,16 +76,24 @@ class GameState (BaseState):
             [enemy.update() for enemy in self.world_manager.current_room.enemy_list]
 
     def draw(self):
+        # desenha a base da sala e suas portas
         self.screen.blit(self.base_map_surface, ((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2))
         self.screen.blit(self.room_surface, ((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2))
 
+        # desenha os inimigos e o jogador
         [enemy.draw(self.screen) for enemy in self.world_manager.current_room.enemy_list]
         self.player.draw(self.screen)
+        # camada de transição
         if self.transitioning:
             self.screen.blit(self.transition_surface, ((WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2))
 
+        # desenha o minimapa
         self.minimap_surface.fill(BACKGROUND)
         self.minimap.draw(self.minimap_surface)
         self.screen.blit(self.minimap_surface, (WIDTH - (MINIMAP_ROOM_SIZE[0] + MINIMAP_GAP) * 5, MINIMAP_GAP))
 
+        # exibe o cursor personalizado
         self.screen.blit(self.cursor_image, self.cursor_rect)
+        # UI do jogo
+        self.screen.blit(self.font.render(f"Vida: {self.player.hp} HP", True, COLOR), (0,0))
+        self.screen.blit(self.font.render(f"{self.main.clock.get_fps() :.1f} FPS", True, COLOR), (0,100))

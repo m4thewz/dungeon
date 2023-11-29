@@ -24,6 +24,7 @@ class Tileset:
         self.map_width = map_width = width // TILE_SIZE
         self.map_height = map_height = height // TILE_SIZE
 
+        # matriz do mapa, cada elemento representa uma imagem
         minimap = [["floor" for _ in range(map_width)] for _ in range(map_height)]
 
         # Um dicionario que contem as informações de cada tileset
@@ -106,6 +107,8 @@ class Tileset:
         border_vertical = [self.load_resized_tile(f"assets/map/wall_border_vertical_{image}.png") for image in ["start", "middle", "end"]]
         wall = self.load_resized_tile("assets/map/wall.png")
         wall_diagonal = self.load_resized_tile("assets/map/wall_diagonal.png")
+
+        # dicionario com todas as imagens usadas no mapa
         tileset = self.tileset = {
             "border_diagonal_upper_left": border,
             "border_diagonal_upper_right": pg.transform.rotate(border, -90),

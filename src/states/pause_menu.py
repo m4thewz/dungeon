@@ -3,7 +3,7 @@ from utils import *
 from src.states.base import BaseState
 from src.menu import Menu
 
-
+# tela aberta quando o jogo é pausado
 class PauseMenuState (BaseState):
     def __init__(self, screen, main):
         self.screen = screen
