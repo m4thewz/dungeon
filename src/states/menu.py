@@ -4,13 +4,15 @@ from src.states.base import BaseState
 from src.menu import Menu
 
 # tela inicial do jogo
+
+
 class MenuState (BaseState):
     def __init__(self, screen, main):
         self.screen = screen
         self.main = main
         self.title = pg.transform.scale(pg.image.load("assets/title.png").convert_alpha(), TITLE_RES)
 
-        functions = [lambda: self.main.new_game(), lambda: 0, lambda: self.main.exit()]
+        functions = [lambda: self.main.new_game(), lambda: self.change_state("credits"), lambda: self.main.exit()]
         self.menu = Menu(["Novo Jogo", "Créditos", "Sair"], functions, (WIDTH / 2, HEIGHT / 2), 75, center=True)
 
     def get_event(self, event):

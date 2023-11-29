@@ -5,8 +5,11 @@ from src.states.menu import MenuState
 from src.states.pause_menu import PauseMenuState
 from src.states.game import GameState
 from src.states.game_over import GameOverState
+from src.states.credits import CreditState
 
 # classe responsavel por inicializar o jogo
+
+
 class Game:
     def __init__(self):
         pg.init()
@@ -18,7 +21,8 @@ class Game:
             "menu": MenuState(self.screen, self),
             "pause_menu": PauseMenuState(self.screen, self),
             "game": GameState(self.screen, self),
-            "game_over": GameOverState(self.screen, self)
+            "game_over": GameOverState(self.screen, self),
+            "credits": CreditState(self.screen, self)
         }
         self.current_state = "menu"
 
@@ -33,7 +37,7 @@ class Game:
     def update(self):
         # atualiza o estado atual
         self.states[self.current_state].update()
-        self.clock.tick(60) #60 fps
+        self.clock.tick(60)  # 60 fps
 
     def draw(self):
         # desenha o estado atual
@@ -46,7 +50,7 @@ class Game:
         self.current_state = "game"
         pg.mouse.set_visible(False)
 
-    def exit(self): # fecha o jogo
+    def exit(self):  # fecha o jogo
         pg.quit()
         sys.exit()
 
