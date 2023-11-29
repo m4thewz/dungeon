@@ -42,9 +42,10 @@ class GameState (BaseState):
         # cursor do mouse personalizado
         self.cursor_image = pg.transform.scale(pg.image.load("assets/cursor.png").convert_alpha(), (16, 16))
         self.cursor_rect = self.cursor_image.get_rect(center=pg.mouse.get_pos())
-        
-        # fonte a ser usada
-        self.font = pg.font.Font("assets/Blockhead.otf", 64)
+
+        # imagem que representa a vida do jogador
+        self.lifebar_image = pg.transform.scale_by(pg.image.load("assets/hp/base.png"), LIFEBAR_SCALE).convert_alpha()
+        self.life_image = pg.transform.scale_by(pg.image.load("assets/hp/full.png"), LIFEBAR_SCALE).convert_alpha()
 
     def transition(self, From: int = 255, To: int = 0, change: int = -10):
         # vai diminuindo o alfa da surface, criando uma transição
@@ -57,11 +58,11 @@ class GameState (BaseState):
 
     def get_event(self, event):
         if event.type == pg.KEYDOWN:
-            if event.key == pg.K_e: # printa o mundo atual
+            if event.key == pg.K_e:  # printa o mundo atual
                 print(self.world_manager)
-            elif event.key == pg.K_c: # pritna os inimigos
+            elif event.key == pg.K_c:  # pritna os inimigos
                 print(self.world_manager.current_room.enemy_list)
-            elif event.key in [pg.K_ESCAPE, pg.K_RETURN, pg.K_KP_ENTER, pg.K_PAUSE]: # pausa o jogo
+            elif event.key in [pg.K_ESCAPE, pg.K_RETURN, pg.K_KP_ENTER, pg.K_PAUSE]:  # pausa o jogo
                 self.change_state("pause_menu")
         else:
             self.player.get_event(event)
@@ -92,8 +93,22 @@ class GameState (BaseState):
         self.minimap.draw(self.minimap_surface)
         self.screen.blit(self.minimap_surface, (WIDTH - (MINIMAP_ROOM_SIZE[0] + MINIMAP_GAP) * 5, MINIMAP_GAP))
 
+        # UI do jogo
+        self.draw_hp(self.screen)
+        self.screen.blit(pg.font.Font("assets/Blockhead.otf", 32).render(f"{self.main.clock.get_fps() :.1f} FPS", True, COLOR), (15, 125))
+
+        water_mark = pg.font.Font(None, 16).render("Matheus Vitor, 1º INFO - IFSP JCR", True, COLOR)
+
+        self.screen.blit(water_mark, (WIDTH - water_mark.get_width() - 5, HEIGHT - water_mark.get_height() - 5))
+
         # exibe o cursor personalizado
         self.screen.blit(self.cursor_image, self.cursor_rect)
-        # UI do jogo
-        self.screen.blit(self.font.render(f"Vida: {self.player.hp} HP", True, COLOR), (0,0))
-        self.screen.blit(self.font.render(f"{self.main.clock.get_fps() :.1f} FPS", True, COLOR), (0,100))
+
+    def draw_hp(self, surface):
+        lifebar_pos = (15, 25)  # posição da barra de vida
+        start_x, start_y = 23 * LIFEBAR_SCALE + lifebar_pos[0], 9 * LIFEBAR_SCALE + lifebar_pos[1]
+        surface.blit(self.lifebar_image, lifebar_pos)
+
+        for index in range(self.player.hp):
+            x = start_x + index * self.life_image.get_width() + index * LIFEBAR_SCALE
+            surface.blit(self.life_image, (x, start_y))
