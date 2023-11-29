@@ -67,6 +67,13 @@ class Room:
         self.doors_rect = [Door(direction, open) for direction in self.doors]
         [door.draw(surface) for door in self.doors_rect]
 
+        if self.type == "start_room":
+            image = pg.transform.scale_by(pg.image.load("assets/keys.png"), 1.5).convert_alpha()
+            x = (surface.get_width() - image.get_width()) / 2
+            y = (surface.get_height() - image.get_height()) / 2
+            # image = pg.image.load("assets/keys.png").convert_alpha()
+            surface.blit(image, (x, y))
+
     def __repr__(self):
         return f"({self.x}, {self.y}, '{self.type}')"
 
