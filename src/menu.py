@@ -1,7 +1,6 @@
 import pygame as pg
 from utils import *
 
-# menu que exibe opções e um seletor
 class Menu:
     def __init__(self, options: list | tuple, functions: list | tuple, pos: list | tuple, font_size: int = 30, gap: int = 5, center: bool = False):
         dot_size = font_size / 2
@@ -9,13 +8,11 @@ class Menu:
         self.font = pg.font.Font("assets/Blockhead.otf", font_size)
         self.options = options
         self.functions = functions
-        self.active_option = 0  # indice da opção atual
+        self.active_option = 0
         self.gap = gap
         self.font_size = font_size
         if center:
-            # verifica qual caracter tem mais caracteres e pega seu tamanho
             menu_width = self.font.size(max(self.options, key=len))[0] + self.dot.get_width() + 10
-            # pega o centro (x) da tela pra ser exibido o menu
             self.pos = ((WIDTH - menu_width) / 2, pos[1])
             print(self.pos, pos)
         else:

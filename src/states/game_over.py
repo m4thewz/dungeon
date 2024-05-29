@@ -11,7 +11,7 @@ class GameOverState (BaseState):
         self.font = pg.font.Font("assets/Blockhead.otf", 124)
 
         functions = [lambda: self.main.new_game(), lambda: self.main.exit()]
-        self.menu = Menu(["Novo Jogo", "Sair"], functions, (WIDTH / 2, HEIGHT / 2), 75, center=True)
+        self.menu = Menu(["New Game", "Exit"], functions, (WIDTH / 2, HEIGHT / 2), 75, center=True)
 
     def get_event(self, event):
         if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
@@ -20,7 +20,6 @@ class GameOverState (BaseState):
             self.menu.get_event(event)
 
     def draw(self):
-        # desenha a tela de game over
         title = self.font.render("Game Over", True, COLOR)
         self.screen.blit(title, ((WIDTH - title.get_width()) / 2, 0.03 * HEIGHT))
         self.menu.draw(self.screen)

@@ -5,12 +5,11 @@ from utils import *
 from src.map.tileset import Tile
 
 
-# adiciona alguns parametros adicionais da class Tile para as portas
 class Door(Tile):
     def __init__(self, direction: str, open: bool = False):
         width, height = MAP_WIDTH // TILE_SIZE, MAP_HEIGHT // TILE_SIZE
         centerx, centery = ((width - 4) // 2) * TILE_SIZE, ((height - 3) // 2) * TILE_SIZE
-        # define o angulo e a posição da porta com base na direção
+
         match direction:
             case "up":
                 angle = 0
@@ -39,15 +38,15 @@ class Room:
         self.x = x
         self.y = y
         self.type = type
-        self.discovered = False  # jogador ja entrou na sala
+        self.discovered = False
         self.map = {}
-        self.doors = []  # lista com apenas as direções das portas
-        self.doors_rect = []  # lista com os sprites das portas
-        self.neighbours = []  # salas vizinhas
+        self.doors = []  # list with doors direction
+        self.doors_rect = []
+        self.neighbours = []
         self.enemy_list = []
 
     def add_doors(self):
-        # pega a direção dos vizinhos e adiciona (pra porta)
+        # add a door in direction of neighbours
         for neighbour in self.neighbours:
             distance_x = self.x - neighbour[0]
             distance_y = self.y - neighbour[1]
@@ -62,7 +61,6 @@ class Room:
                 self.doors.append("down")
 
     def draw_doors(self, surface):
-        # verifica o estado da porta (aberta ou fechada)
         open = True if not self.enemy_list else False
         self.doors_rect = [Door(direction, open) for direction in self.doors]
         [door.draw(surface) for door in self.doors_rect]
@@ -71,7 +69,7 @@ class Room:
             image = pg.transform.scale_by(pg.image.load("assets/keys.png"), 1.5).convert_alpha()
             x = (surface.get_width() - image.get_width()) / 2
             y = (surface.get_height() - image.get_height()) / 2
-            # image = pg.image.load("assets/keys.png").convert_alpha()
+
             surface.blit(image, (x, y))
 
     def __repr__(self):

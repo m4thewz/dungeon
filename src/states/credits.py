@@ -2,21 +2,18 @@ from src.states.base import BaseState
 from utils import *
 import pygame as pg
 credits = """
-Programador: Matheus Vitor
-Designers: Matheus Vitor e Maria Rita
+Dev: Matheus Vitor
+Designers: Matheus Vitor and Maria Rita
 
-Inspiração de jogo: The Binding of Isaac
-Inspiração mapa: @0x72 (itch.io)
-Inspiração personagem: @penzilla (itch.io)
-Arma por @vladpenn (itch.io)
-Barra de vida por @adwitr (itch.io)
+Inspiration game: The Binding of Isaac
+Inspiration map: @0x72 (itch.io)
+Inspiration character: @penzilla (itch.io)
+Gun by @vladpenn (itch.io)
+Life bar by @adwitr (itch.io)
 
-
-Agradecimentos especiais a Sostenes Pereira e Eduardo Marmo, dois professores incríveis.
 """
 
 
-# tela para os créditos
 class CreditState (BaseState):
     def __init__(self, screen, main):
         self.screen = screen
@@ -28,8 +25,8 @@ class CreditState (BaseState):
 
     def draw(self):
         font = pg.font.Font(None, 36)
-        # divide cada linha e a desenha
         lines = credits.strip().split('\n')
+
         for i, line in enumerate(lines):
             text = font.render(line, True, COLOR)
             text_rect = text.get_rect(center=(self.screen.get_width() // 2, 100 + i * 40))

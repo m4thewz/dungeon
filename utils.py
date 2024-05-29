@@ -1,10 +1,9 @@
 import pygame as pg
 
-# variaveis e funções globais aqui
 RES = WIDTH, HEIGHT = 1450, 900
 MAP_RES = MAP_WIDTH, MAP_HEIGHT = 1200, 700
 TILE_SIZE = 50
-TITLE_RES = ((0.5 * WIDTH, 0.3 * HEIGHT))  # 60% e 40% do tamanho da tela
+TITLE_RES = ((0.5 * WIDTH, 0.3 * HEIGHT))
 LIFEBAR_SCALE = 4
 
 MINIMAP_GAP = 5
@@ -20,8 +19,6 @@ PLAYER_WIDTH = TILE_SIZE
 BULLET_SPEED = 13
 BULLET_SIZE = (16, 8)
 
-
-# funções globais
 
 def GET_MASK_RECT(surf, top=0, left=0):
     mask = pg.mask.from_surface(surf)

@@ -4,7 +4,6 @@ tileset = None
 
 
 class Tile(pg.sprite.Sprite):
-    # cria um retangulo para cada imagem do mapa, util pra as colisões
     def __init__(self, tile_name: str, x: int, y: int, image=None):
         pg.sprite.Sprite.__init__(self)
         self.type = tile_name
@@ -20,38 +19,34 @@ class Tile(pg.sprite.Sprite):
 class Tileset:
     def generate_map(self, surface, width: int, height: int, game):
         self.generate_tilesets()
-        # mais tarde adicionar mais tilesets pra randomizar o chao.
+        # TODO: add floor tilesets
         self.map_width = map_width = width // TILE_SIZE
         self.map_height = map_height = height // TILE_SIZE
 
-        # matriz do mapa, cada elemento representa uma imagem
+        # matrix of map, every  element represents one image
         minimap = [["floor" for _ in range(map_width)] for _ in range(map_height)]
 
-        # Um dicionario que contem as informações de cada tileset
+        # dict with tilisets infos
         self.map = {
             (row_index, col_index): tileset_index for row_index, row in enumerate(minimap) for col_index, tileset_index in enumerate(row)
         }
-        # Define as paredes horizontais
+        # horizontal walls
         for pos in range(2, map_width - 2):
             self.map[1, pos] = "wall_top"
             self.map[map_height - 2, pos] = "wall_bottom"
 
-        # Define as paredes verticais
+        # vertical walls
         for pos in range(2, map_height - 2):
             self.map[pos, 1] = "wall_left"
             self.map[pos, (map_width - 2)] = "wall_right"
 
-        # Define as paredes diagonais
-        # X = posição da penultima ou segunda célula da linha, Y = posição da penultima ou segunda célula da coluna
+        # diagonal walls
         self.map[1, 1] = "wall_diagonal_upper_left"
         self.map[map_height - 2, 1] = "wall_diagonal_bottom_left"
         self.map[1, map_width - 2] = "wall_diagonal_upper_right"
         self.map[map_height - 2, map_width - 2] = "wall_diagonal_bottom_right"
 
-        # Define bordas horizontais
-
-        # Define as primeiras bordas das primeiras e ultimas linhas
-        # X = posição da primeira célula da linha, Y = posição da ultima ou primeira célula da coluna
+        # horizontal borders
         self.map[0, 1] = "border_horizontal_start_top"
         self.map[map_height - 1, 1] = "border_horizontal_start_bottom"
 
@@ -59,13 +54,10 @@ class Tileset:
             self.map[0, pos] = "border_horizontal_middle_top"
             self.map[map_height - 1, pos] = "border_horizontal_middle_bottom"
 
-        # Define as últimas bordas das primeiras e ultimas linhas
-        # X = posição da última célula da linha, Y = posição da ultima ou primeira célula da coluna
-
         self.map[0, map_width - 2] = "border_horizontal_end_top"
         self.map[map_height - 1, map_width - 2] = "border_horizontal_end_bottom"
 
-        # Define bordas verticais; aqui X e Y tem os mesmos valores, porém invertidos (X = y, Y = x)
+        # vertical borders
         self.map[1, 0] = "border_vertical_start_left"
         self.map[1, map_width - 1] = "border_vertical_start_right"
 
@@ -76,8 +68,7 @@ class Tileset:
         self.map[map_height - 2, 0] = "border_vertical_end_left"
         self.map[map_height - 2, map_width - 1] = "border_vertical_end_right"
 
-        # Define as bordas diagonais dos 4 cantos
-        # X = posição da primeira ou última célula da linha, Y = posição da primeira ou última célula da coluna
+        # diagonal borders
         self.map[0, 0] = "border_diagonal_upper_left"
         self.map[map_height - 1, 0] = "border_diagonal_bottom_left"
         self.map[0, map_width - 1] = "border_diagonal_upper_right"
@@ -100,15 +91,12 @@ class Tileset:
 
     def generate_tilesets(self):
         global tileset
-        # Defino as imagens que serão utilizas
-        # border_horizontal e border_vertical são uma lista de 3 texturas (start, middle, end)
         border = self.load_resized_tile("assets/map/wall_border_diagonal.png")
         border_horizontal = [self.load_resized_tile(f"assets/map/wall_border_horizontal_{image}.png") for image in ["start", "middle", "end"]]
         border_vertical = [self.load_resized_tile(f"assets/map/wall_border_vertical_{image}.png") for image in ["start", "middle", "end"]]
         wall = self.load_resized_tile("assets/map/wall.png")
         wall_diagonal = self.load_resized_tile("assets/map/wall_diagonal.png")
 
-        # dicionario com todas as imagens usadas no mapa
         tileset = self.tileset = {
             "border_diagonal_upper_left": border,
             "border_diagonal_upper_right": pg.transform.rotate(border, -90),

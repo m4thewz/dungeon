@@ -2,7 +2,6 @@ import pygame as pg
 from utils import *
 
 
-# classe base para qualquer entidade do jogo (jogador, inimigos e chefe)
 class Entity(pg.sprite.Sprite):
     def __init__(self, image: str, width: int, height: int, position: tuple = (0, 0), hp: int = 10):
         pg.sprite.Sprite.__init__(self)
@@ -11,16 +10,14 @@ class Entity(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = position
         self.hitbox = GET_MASK_RECT(self.image, *self.rect.topleft)
-        self.velocity = [0, 0]  # alterações a fazer no X e no Y da entidade
-        self.direction = 1  # esquerda, direita = 0, 1
+        self.velocity = [0, 0] 
+        self.direction = 1  # left, right = 0, 1
 
     def update_hitbox(self):
-        # atualiza a hitbox(mascara) da entidade
         self.hitbox = GET_MASK_RECT(self.image, *self.rect.topleft)
         self.hitbox.midbottom = self.rect.midbottom
 
     def basic_update(self):
-        # update basico de uma entidade, atualiza sua hitbox, direção e tambem a move com base na sua velocidade
         self.update_hitbox()
         self.rect.move_ip(*self.velocity)
         self.hitbox.move_ip(*self.velocity)
@@ -33,12 +30,10 @@ class Entity(pg.sprite.Sprite):
         pass
 
     def draw(self, surface):
-        # desenha a entidade e sua sombra
         self.draw_shadow(surface, (0, 0, self.rect.width / 2, self.rect.height / 8))
         surface.blit(self.image, self.rect)
 
     def draw_shadow(self, surface, size, dimension=50, vertical_shift=-6, horizontal_shift=0):
-        # desenha uma sombra da entidade
         ellipse = pg.Surface((dimension, dimension), pg.SRCALPHA).convert_alpha()
         pg.draw.ellipse(ellipse, (0, 0, 0, 50), size)
         ellipse = pg.transform.scale(ellipse, (2 * dimension, 2 * dimension))

@@ -1,7 +1,6 @@
 import pygame as pg
 
 
-# estado base do jogo, unica função relevante é a change_state
 class BaseState:
     def get_event(self, event):
         pass
@@ -13,10 +12,9 @@ class BaseState:
         pass
 
     def change_state(self, state):
-        # muda o estado atual do jogo
         self.main.current_state = state
         if state == "game":
-            # faz uma transição
+            # transition
             pg.mouse.set_visible(False)
             self.main.states["game"].transition_alpha = 255
             self.main.states["game"].transitioning = True
