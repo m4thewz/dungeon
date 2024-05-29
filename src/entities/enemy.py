@@ -56,7 +56,7 @@ class Enemy(Entity):
         self.spawn()
 
     def spawn(self):  # spawna o inimigo em um lugar aleatorio da sala
-        start_x, start_y = (WIDTH - MAP_WIDTH) / 2, (HEIGHT - MAP_HEIGHT) / 2
+        start_x, start_y = (WIDTH - MAP_WIDTH) // 2, (HEIGHT - MAP_HEIGHT) // 2
         wall_size = TILE_SIZE * 4  # tamanho da parede (pra nao spawnar inimigo dentro das paredes)
         self.rect.x = random.randint(start_x + wall_size, start_x + MAP_WIDTH - wall_size)
         self.rect.y = random.randint(start_y + wall_size, start_y + MAP_HEIGHT - wall_size)
